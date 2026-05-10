@@ -1,2 +1,2 @@
-index.html
+# kgb-dashboard
 Mining Ops Dashboard KGB
