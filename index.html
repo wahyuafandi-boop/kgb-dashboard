@@ -2263,7 +2263,11 @@ window.KGB_PAGES = (function () {
         // try cache
         const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
         if (cached && Date.now() - cached.t < ttl) {
-          this.rows = cached.rows;
+          // Re-apply hasActual saat load dari cache (cache lama mungkin belum punya field ini)
+          this.rows = cached.rows.map(row => ({
+            ...row,
+            hasActual: row.hasActual !== undefined ? row.hasActual : (Number(row.aktualOB) > 0 || Number(row.aktualCoal) > 0)
+          }));
           this.lastUpdate = new Date(cached.t);
           this.updateLastUpdate();
           return;
@@ -2272,7 +2276,11 @@ window.KGB_PAGES = (function () {
           const r = await fetch(url);
           const j = await r.json();
           if (j.ok) {
-            this.rows = j.rows;
+            // Tambah hasActual: true jika ada data aktual OB atau Coal
+            this.rows = j.rows.map(row => ({
+              ...row,
+              hasActual: (Number(row.aktualOB) > 0 || Number(row.aktualCoal) > 0)
+            }));
             this.lastUpdate = new Date();
             localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), rows: this.rows }));
             this.updateLastUpdate();
