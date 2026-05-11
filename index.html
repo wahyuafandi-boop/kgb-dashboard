@@ -2103,7 +2103,7 @@ window.KGB_PAGES = (function () {
         </div>
         <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button class="btn-primary" style="background: var(--slate-800); color: #fff;" onclick="KGB.saveSettings()">Simpan Konfigurasi</button>
-          <button class="btn ghost" style="background: #fff; border: 1px solid var(--slate-200); padding: 12px 16px; border-radius: 10px;" onclick="localStorage.removeItem('kgb-cache'); KGB.toast('Cache dibersihkan')">Clear Cache</button>
+          <button class="btn ghost" style="background: #fff; border: 1px solid var(--slate-200); padding: 12px 16px; border-radius: 10px;" onclick="KGB.clearCache()">Clear Cache</button>
         </div>
       </div>
     `;
@@ -2303,6 +2303,14 @@ window.KGB_PAGES = (function () {
         const d = this.lastUpdate;
         el.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
       }
+    },
+
+    clearCache() {
+      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem("kgb-data");
+      localStorage.removeItem("kgb-last-fetch");
+      this.toast("Cache dibersihkan. Memuat ulang...");
+      setTimeout(() => location.reload(), 800);
     },
 
     async refresh() {
